@@ -76,7 +76,7 @@ Response to evaluate:
     for attempt in range(2):
         try:
             message = client.messages.create(
-                model="claude-sonnet-4-20250514",
+                model="claude-sonnet-4-6",
                 max_tokens=200,
                 # CHANGE: temperature=0 for the judge so scores are consistent across runs.
                 # A non-zero temperature would cause the same response to score differently each time.
@@ -105,7 +105,7 @@ def run_experiments(clause_text: str, task: str, run_id: str) -> list:
 
         start = time.time()
         message = client.messages.create(
-            model="claude-sonnet-4-20250514",
+            model="claude-sonnet-4-6",
             max_tokens=512,
             temperature=variant["temperature"],
             system=variant["system"],

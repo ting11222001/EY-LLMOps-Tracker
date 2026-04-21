@@ -16,20 +16,26 @@ def init_db():
             clause_text TEXT,
             response TEXT,
             score INTEGER,
+            score_reason TEXT,
             latency_seconds REAL,
             created_at TEXT
         )
     """)
+    # Add score_reason to existing databases that predate this change
+    try:
+        conn.execute("ALTER TABLE runs ADD COLUMN score_reason TEXT")
+    except sqlite3.OperationalError:
+        pass  # Column already exists
     conn.commit()
     conn.close()
 
 
-def save_run(run_id, variant_name, temperature, task, clause_text, response, score, latency_seconds):
+def save_run(run_id, variant_name, temperature, task, clause_text, response, score, score_reason, latency_seconds):
     conn = sqlite3.connect(DB_PATH)
     conn.execute("""
-        INSERT INTO runs (run_id, variant_name, temperature, task, clause_text, response, score, latency_seconds, created_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """, (run_id, variant_name, temperature, task, clause_text, response, score, latency_seconds, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+        INSERT INTO runs (run_id, variant_name, temperature, task, clause_text, response, score, score_reason, latency_seconds, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (run_id, variant_name, temperature, task, clause_text, response, score, score_reason, latency_seconds, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
     conn.commit()
     conn.close()
 
